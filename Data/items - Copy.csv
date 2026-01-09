@@ -1,0 +1,139 @@
+Category,Name,Size,Rate,Stock,Barcode,LowStockThreshold
+Appetizer,Lahori Fire Wings,5 Pc,350,20,APP001,5
+Appetizer,Lahori Fire Wings,10 Pc,600,15,APP001,5
+Appetizer,Oven Baked Wings,5 Pc,370,20,APP002,5
+Appetizer,Oven Baked Wings,10 Pc,670,15,APP002,5
+Appetizer,Hot Shots (12 Pc),R,480,25,APP003,5
+Appetizer,Chicken Strips,R,300,30,APP004,6
+Appetizer,Nuggets,5 Pc,280,25,APP005,5
+Appetizer,Nuggets,10 Pc,480,20,APP005,5
+Appetizer,Honey Wings,5 Pc,400,18,APP006,4
+Appetizer,Honey Wings,10 Pc,750,12,APP006,4
+Beverages,1 Liter Drink,R,200,100,DRINK001,20
+Beverages,1.5 Liter Drink,R,250,80,DRINK002,15
+Beverages,500 ml Drink,R,110,120,DRINK003,25
+Beverages,Mineral Water (S),R,80,150,WATER001,30
+Beverages,Mineral Water (L),R,120,100,WATER002,20
+BurgerBar,Zinger Crispy,R,400,30,BURGER001,5
+BurgerBar,Chatpata Burger,R,350,30,BURGER002,5
+BurgerBar,Grilled Badshah,R,450,25,BURGER003,5
+BurgerBar,Chicken Burger,R,350,35,BURGER004,7
+BurgerBar,Thunder Burger,R,350,35,BURGER005,7
+BurgerBar,Patty Burger,R,300,40,BURGER006,8
+BurgerBar,Bhuk Mafia,R,700,20,BURGER007,4
+BurgerBar,Oye Hoye Burger,R,700,20,BURGER008,4
+BurgerBar,Moto Don,R,700,20,BURGER009,4
+BurgerBar,Burger-e-Badmash,R,850,15,BURGER010,3
+CheeseStick,Meezan Master Cheese Stick,R,700,20,CHEESE001,4
+CheeseStick,Mashroom Cheese Stick,R,600,22,CHEESE002,4
+CheeseStick,Chicken Cheese Stick,R,550,25,CHEESE003,5
+CheeseStick,Kabab Cheese Stick,R,650,18,CHEESE004,4
+Deals,Deal 1 (Burger/Fries/Drink),R,650,50,DEAL001,10
+Deals,Deal 2 (2 Burgers/Fries/Drink),R,1100,50,DEAL002,10
+Deals,Deal 3 (Pizza S/Fries/Drink),R,1200,50,DEAL003,10
+Deals,Deal 4 (Pizza M/Fries/Drink),R,1700,50,DEAL004,10
+Deals,Deal 5 (Pizza L/Fries/Drink),R,2200,50,DEAL005,10
+Deals,Deal 6 (Pizza S/Burger/Fries/Drink),R,1400,40,DEAL006,8
+Deals,Deal 7 (Pizza M/Burger/Fries/Drink),R,1950,40,DEAL007,8
+Deals,Deal 8 (2 Pizza S/2 Drinks),R,1800,30,DEAL008,6
+Deals,Deal 9 (2 Pizza M/2 Drinks),R,3000,30,DEAL009,6
+Deals,Deal 10 (2 Pizza L/4 Drinks),R,3900,25,DEAL010,5
+Deals,Deal 11 (Pizza XL/4 Drinks),R,3200,25,DEAL011,5
+Deals,Deal 12 (4 Zinger/Fries/1.5L),R,1900,35,DEAL012,7
+Deals,Deal 13 (2 Shawarma/Fries/Drink),R,800,45,DEAL013,9
+Deals,Deal 14 (Pizza M/HotShots/1.5L),R,1950,35,DEAL014,7
+MeezanFries,Plain Fries,R,150,50,FRIES001,10
+MeezanFries,Masala Fries,R,200,45,FRIES002,9
+MeezanFries,Rainbow Fries,R,450,30,FRIES003,6
+MeezanFries,Meezan Loaded Fries,R,550,25,FRIES004,5
+MeezanFries,Zinger Cheese Fries,R,550,25,FRIES005,5
+PastaKing,Meezan Special Pasta,Half,500,15,PASTA001,4
+PastaKing,Meezan Special Pasta,Full,700,10,PASTA001,4
+PastaKing,Alfrado Pasta,Half,450,15,PASTA002,4
+PastaKing,Alfrado Pasta,Full,600,10,PASTA002,4
+PastaKing,Mexican Pasta,Half,450,15,PASTA003,4
+PastaKing,Mexican Pasta,Full,600,10,PASTA003,4
+PizzaClassic,Super Supreme,S,600,20,PIZZA001,5
+PizzaClassic,Super Supreme,M,1150,20,PIZZA001,5
+PizzaClassic,Super Supreme,L,1450,15,PIZZA001,5
+PizzaClassic,Super Supreme,XL,2250,10,PIZZA001,5
+PizzaClassic,Malai Boti,S,600,20,PIZZA002,5
+PizzaClassic,Malai Boti,M,1150,20,PIZZA002,5
+PizzaClassic,Malai Boti,L,1450,15,PIZZA002,5
+PizzaClassic,Malai Boti,XL,2250,10,PIZZA002,5
+PizzaClassic,Crown Crust,S,600,20,PIZZA003,5
+PizzaClassic,Crown Crust,M,1150,20,PIZZA003,5
+PizzaClassic,Crown Crust,L,1450,15,PIZZA003,5
+PizzaClassic,Crown Crust,XL,2250,10,PIZZA003,5
+PizzaClassic,Italian Pizza,S,600,20,PIZZA004,5
+PizzaClassic,Italian Pizza,M,1150,20,PIZZA004,5
+PizzaClassic,Italian Pizza,L,1450,15,PIZZA004,5
+PizzaClassic,Italian Pizza,XL,2250,10,PIZZA004,5
+PizzaClassic,Smoked BBQ,S,600,20,PIZZA005,5
+PizzaClassic,Smoked BBQ,M,1150,20,PIZZA005,5
+PizzaClassic,Smoked BBQ,L,1450,15,PIZZA005,5
+PizzaClassic,Smoked BBQ,XL,2250,10,PIZZA005,5
+PizzaClassic,Lahori Lava Tikka,S,600,20,PIZZA006,5
+PizzaClassic,Lahori Lava Tikka,M,1150,20,PIZZA006,5
+PizzaClassic,Lahori Lava Tikka,L,1450,15,PIZZA006,5
+PizzaClassic,Lahori Lava Tikka,XL,2250,10,PIZZA006,5
+PizzaClassic,Desi Don Pizza,S,600,20,PIZZA007,5
+PizzaClassic,Desi Don Pizza,M,1150,20,PIZZA007,5
+PizzaClassic,Desi Don Pizza,L,1450,15,PIZZA007,5
+PizzaClassic,Desi Don Pizza,XL,2250,10,PIZZA007,5
+PizzaClassic,Chicken Fajita Max,S,600,20,PIZZA008,5
+PizzaClassic,Chicken Fajita Max,M,1150,20,PIZZA008,5
+PizzaClassic,Chicken Fajita Max,L,1450,15,PIZZA008,5
+PizzaClassic,Chicken Fajita Max,XL,2250,10,PIZZA008,5
+PizzaClassic,Donner Creamy Style,S,600,20,PIZZA009,5
+PizzaClassic,Donner Creamy Style,M,1150,20,PIZZA009,5
+PizzaClassic,Donner Creamy Style,L,1450,15,PIZZA009,5
+PizzaClassic,Donner Creamy Style,XL,2250,10,PIZZA009,5
+PizzaClassic,Cheese Lover,S,500,25,PIZZA010,5
+PizzaClassic,Cheese Lover,M,850,25,PIZZA010,5
+PizzaClassic,Cheese Lover,L,1150,20,PIZZA010,5
+PizzaClassic,Cheese Lover,XL,1850,15,PIZZA010,5
+PizzaClassic,Veggie Supreme,S,500,25,PIZZA011,5
+PizzaClassic,Veggie Supreme,M,850,25,PIZZA011,5
+PizzaClassic,Veggie Supreme,L,1150,20,PIZZA011,5
+PizzaClassic,Veggie Supreme,XL,1850,15,PIZZA011,5
+PizzaSignature,Meezan Meal Master,S,750,15,PIZZA101,4
+PizzaSignature,Meezan Meal Master,M,1250,15,PIZZA101,4
+PizzaSignature,Meezan Meal Master,L,1550,12,PIZZA101,4
+PizzaSignature,Meezan Meal Master,XL,2550,8,PIZZA101,4
+PizzaSignature,Creamy Super Max,S,750,15,PIZZA102,4
+PizzaSignature,Creamy Super Max,M,1250,15,PIZZA102,4
+PizzaSignature,Creamy Super Max,L,1550,12,PIZZA102,4
+PizzaSignature,Creamy Super Max,XL,2550,8,PIZZA102,4
+PizzaSignature,Yadgar Chapetle King,S,750,15,PIZZA103,4
+PizzaSignature,Yadgar Chapetle King,M,1250,15,PIZZA103,4
+PizzaSignature,Yadgar Chapetle King,L,1550,12,PIZZA103,4
+PizzaSignature,Yadgar Chapetle King,XL,2550,8,PIZZA103,4
+PizzaSignature,Lahori Peri Peri,S,750,15,PIZZA104,4
+PizzaSignature,Lahori Peri Peri,M,1250,15,PIZZA104,4
+PizzaSignature,Lahori Peri Peri,L,1550,12,PIZZA104,4
+PizzaSignature,Lahori Peri Peri,XL,2550,8,PIZZA104,4
+PizzaSignature,Dabang Double Donner,S,900,12,PIZZA105,3
+PizzaSignature,Dabang Double Donner,M,1450,12,PIZZA105,3
+PizzaSignature,Dabang Double Donner,L,1700,10,PIZZA105,3
+PizzaSignature,Dabang Double Donner,XL,2800,6,PIZZA105,3
+RollsWraps,Charsi Paratha Roll,R,500,25,ROLL001,5
+RollsWraps,Gangster Roll,R,400,30,ROLL002,6
+RollsWraps,Maharaja Masalydar Wrap,R,450,25,ROLL003,5
+RollsWraps,Desi Badmash Wrap,R,400,30,ROLL004,6
+RollsWraps,Garam Gunda Roll,R,400,30,ROLL005,6
+RollsWraps,Shahi Nawab Wrap,R,550,20,ROLL006,4
+ShawarmaBar,Zaitoon Shawarma,R,300,35,SHAW001,7
+ShawarmaBar,Chicken Shawarma,R,250,40,SHAW002,8
+ShawarmaBar,Tandoori Twister,R,300,35,SHAW003,7
+ShawarmaBar,Lahori Rocket,R,300,35,SHAW004,7
+ShawarmaBar,Sultan Donner Meezan,R,400,25,SHAW005,5
+ShawarmaBar,Patakha Shawarma,R,300,35,SHAW006,7
+ShawarmaBar,Meezan Killer Platter,R,550,20,SHAW007,4
+ShawarmaBar,Desi Don Platter,R,450,22,SHAW008,4
+ShawarmaBar,Wahga Blast Platter,R,500,20,SHAW009,4
+ShawarmaBar,Badshahi Bite Platter,R,500,20,SHAW010,4
+ShawarmaBar,Bhuk Ka Badmash (Sandwich),R,650,18,SHAW011,4
+ShawarmaBar,Mizaaj-e-Gram (Sandwich),R,550,20,SHAW012,4
+ShawarmaBar,Panga Sandwich,R,500,22,SHAW013,4
+ShawarmaBar,Charsi Sandwich,R,550,20,SHAW014,4

@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meezan Meals Master - POS</title>
+    <style>
+        /* EXISTING CSS */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            overflow-x: hidden;
+        }
+
+        .container,
+        #main {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+        }
+
+        /* LAYOUT */
+        .left-panel {
+            flex: 3;
+            padding: 15px;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 15px;
+            min-width: 380px;
+            background-color: #fafafa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVIGATION & BUTTONS */
+        .navigation-buttons {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .navigation-buttons button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .navigation-buttons button.active {
+            background: #ffc107;
+            color: black;
+            border: 2px solid #e0a800;
+        }
+
+        /* PRODUCT TABLE */
+        #tab-content-area {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #eee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            z-index: 10;
+        }
+
+        tbody td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .size-btn {
+            padding: 5px 8px;
+            margin: 2px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .size-btn.selected {
+            background: #ffc107;
+            border-color: #e0a800;
+            font-weight: bold;
+        }
+
+        .size-btn.low-stock {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .size-btn.out-of-stock {
+            color: #f44336;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* CART & RIGHT PANEL */
+        #cart-display {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            background: white;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px dashed #ccc;
+            font-size: 13px;
+        }
+
+        .cart-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-meta {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .totals-section div {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+
+        .totals-section input {
+            width: 70px;
+            text-align: right;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .total-highlight {
+            background-color: #c8e6c9;
+            padding: 10px !important;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            border: 1px solid #4CAF50;
+        }
+
+        /* PAYMENT & ORDER TYPE */
+        .grid-buttons {
+            display: flex;
+            gap: 5px;
+            margin: 5px 0;
+        }
+
+        .grid-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            font-size: 13px;
+        }
+
+        .grid-btn.selected {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+            font-weight: bold;
+            color: #2e7d32;
+            box-shadow: inset 0 0 0 1px #4CAF50;
+        }
+
+        /* ACTION BUTTONS */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 400px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        .modal-close {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* LOGIN */
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f4f4f4;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .login-input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-btn {
+            width: 98%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        /* BARCODE SCANNER */
+        .barcode-scanner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scanner-active {
+            background: #ff9800;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* STOCK ALERTS */
+        .low-stock {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .out-of-stock {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .adequate {
+            color: #4CAF50;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* CUSTOM TITLE BAR CSS */
+        .ahk-titleBar {
+            display: flex;
+            align-items: stretch;
+            background-color: #e3f2fd;
+            /* Matching your theme */
+            height: 32px;
+            border-bottom: 1px solid #ccc;
+            user-select: none;
+        }
+
+        #ahkTitleBar {
+            flex-grow: 1;
+            padding: 0 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            -webkit-app-region: drag;
+            /* Allows moving the window */
+            color: #333;
+        }
+
+        .ahk-title-btn {
+            padding: 0 15px;
+            cursor: pointer;
+            font-family: Webdings;
+            font-size: 11pt;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ahk-title-btn:hover {
+            background: rgba(0, 0, 0, .1);
+        }
+
+        .ahk-title-btn-close:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Maximize/Restore Toggle Logic */
+        body .ahk-title-btn-restore {
+            display: none;
+        }
+
+        body.ahk-maximized .ahk-title-btn-restore {
+            display: block;
+        }
+
+        body.ahk-maximized .ahk-title-btn-maximize {
+            display: none;
+        }
+
+        /* Adjust main container to subtract titlebar height */
+        .container,
+        #main {
+            height: calc(100vh - 33px);
+            /* 100vh minus titleBar height + border */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Custom Title Bar -->
+    <div class="ahk-titleBar">
+        <span id="ahkTitleBar">Meezan Meals Master - POS</span>
+        <span class="ahk-title-btn" onclick="ahk.gui.Minimize()">0</span>
+        <span class='ahk-title-btn ahk-title-btn-maximize' onclick="ahk.gui.Maximize()">1</span>
+        <span class='ahk-title-btn ahk-title-btn-restore' onclick="ahk.gui.Restore()">2</span>
+        <span class="ahk-title-btn ahk-title-btn-close" onclick="ahk.CloseApp()">r</span>
+    </div>
+
+    <input type="hidden" id="ahk_request_channel" data-action="" data-payload="" data-callback="" data-reqid="">
+
+    <div id="login-screen" class="login-wrapper">
+        <div class="login-box">
+            <h2 style="color:#333;">Meezan Meals POS</h2>
+            <p style="color:#666; margin-bottom:20px;">Login to POS</p>
+            <form onsubmit="event.preventDefault(); attemptLogin();">
+                <input type="text" id="username" class="login-input" placeholder="Username" required>
+                <input type="password" id="password" class="login-input" placeholder="Password" required>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="submit" class="login-btn" style="flex:1;">Login</button>
+                    <button type="button" class="login-btn" style="flex:1; background-color: #dc3545;"
+                        onclick="ahk.CloseApp()">Exit</button>
+                </div>
+            </form>
+            <p id="login-error" style="color: red; display: none; margin-top:10px;">Invalid credentials</p>
+        </div>
+    </div>
+
+    <div id="pos-interface" style="display: none;">
+        <div id="main">
+            <div class="left-panel">
+                <div
+                    style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: #e3f2fd; padding: 10px; border-radius: 4px;">
+                    <span>User: <strong><span id="current-user-display"></span></strong></span>
+                    <span style="font-size: 12px; color: #666;">Date: <span id="current-date"></span></span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="customer-name" placeholder="Customer Name"
+                        style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="tel" id="customer-phone" placeholder="Phone Number"
+                        style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+
+                <div class="navigation-buttons" id="navigation-buttons"></div>
+
+                <div id="tab-content-area">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 35%">Item</th>
+                                <th style="width: 30%">Size</th>
+                                <th style="width: 15%">Rate</th>
+                                <th style="width: 10%">Stock</th>
+                                <th style="width: 10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <h2 style="margin: 0 0 10px 0; display: flex; align-items: center;">🛒 Cart</h2>
+
+                <div id="cart-display">
+                    <div style="text-align:center; padding: 20px; color: #999;">Cart is empty</div>
+                </div>
+
+                <div class="totals-section">
+                    <div><span>Sub-Total:</span><span id="sub-total">0.00</span></div>
+                    <div><span>Discount:</span><input type="number" id="discount" value="0" oninput="calculateTotals()">
+                    </div>
+                    <div><span>Tax (18%):</span><span id="taxes">0.00</span></div>
+
+                    <div id="table-row"><span>Table No:</span><input type="text" id="table-no" placeholder="e.g. 5">
+                    </div>
+                    <div id="delivery-row" style="display:none;"><span>Delivery:</span><input type="number"
+                            id="delivery-charges" value="0" oninput="calculateTotals()"></div>
+
+                    <div class="total-highlight">
+                        <span>Total:</span><span id="total-amount">0.00</span>
+                    </div>
+
+                    <div><span>Amount Paid:</span><input type="number" id="amount-paid" value="0"
+                            oninput="window.isAmountPaidEdited=true; calculateTotals()"></div>
+                    <div style="color: red; font-weight: bold;"><span>Remaining:</span><span
+                            id="remaining-amount">0.00</span></div>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <label style="font-size:12px; font-weight:bold; color:#666;">Payment Method:</label>
+                    <div class="grid-buttons">
+                        <div class="grid-btn selected" onclick="selectOption('payment', 'cash', this)">💵 Cash</div>
+                        <div class="grid-btn" onclick="selectOption('payment', 'card', this)">💳 Card</div>
+                        <div class="grid-btn" onclick="selectOption('payment', 'online', this)">🌐 Online</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 5px;">
+                    <label style="font-size:12px; font-weight:bold; color:#666;">Order Type:</label>
+                    <div class="grid-buttons">
+                        <div class="grid-btn selected" onclick="selectOption('type', 'dinein', this)">🍽️ Dine-in</div>
+                        <div class="grid-btn" onclick="selectOption('type', 'takeaway', this)">🛍️ Take Away</div>
+                        <div class="grid-btn" onclick="selectOption('type', 'delivery', this)">🛵 Delivery</div>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <button class="action-btn" style="background:#4CAF50;" onclick="checkout(true)">🖨️ Print
+                        Receipt</button>
+                    <button class="action-btn" style="background:#ff9800;" onclick="generateKOT()">📄 Print KOT</button>
+
+                    <button class="action-btn" style="background:#2196F3;" onclick="holdOrder()">⏸️ Hold Order</button>
+                    <button class="action-btn" style="background:#9c27b0;" onclick="showHeldOrders()">📂 Load
+                        Held</button>
+
+                    <button class="action-btn" style="background:#6c757d;" onclick="clearCart()">🗑️ Clear Cart</button>
+                    <button class="action-btn" style="background:#17a2b8;" onclick="showTodaySales()">📊 Today
+                        Sales</button>
+
+                    <button class="action-btn" style="background:#795548;" onclick="showStockManagement()">📦
+                        Stock</button>
+                    <button class="action-btn" style="background:#009688;" onclick="openReportModal()">📈
+                        Reports</button>
+
+                    <button class="action-btn admin-only" style="background:#607d8b;" onclick="showUserManagement()"
+                        id="user-mgmt-btn">👥 Users</button>
+                    <button class="action-btn admin-only" style="background:#ff5722;" onclick="importItemsCsv()"
+                        id="import-csv-btn">📂 Import CSV</button>
+                    <button class="action-btn admin-only" style="background:#ff9800;" onclick="exportItemsCsv()"
+                        id="export-csv-btn">📤 Export CSV</button>
+                    <button class="action-btn" style="background:#f44336;" onclick="logout()">🚪
+                        Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barcode Scanner Button -->
+    <div id="barcode-scanner-btn" class="barcode-scanner" onclick="toggleBarcodeScanner()">
+        📷 <span id="scanner-text">Scan</span>
+    </div>
+
+    <!-- Hidden Receipt Divs -->
+    <div id="receipt-div" style="display:none;"></div>
+
+    <div id="modal-container"></div>
+    <script>
+        // ============================================
+        // MIGRATED & ENHANCED LOCALSTORAGE POS LOGIC
+        // With AHK Master Data Integration
+        // ============================================
+
+        // --- 1. CONFIG & STATE ---
+        const TAX_RATE = 0.18;
+        let currentUser = null;
+        let cart = [];
+        let masterItems = {}; // Populated from AHK + Stock Logic
+        let currentCategory = "";
+        let selectedPayment = "cash";
+        let selectedType = "dinein";
+        let isBarcodeScannerActive = false;
+        let barcodeInputBuffer = '';
+        let barcodeTimeout;
+        let editingInvoiceNo = null;
+        window.isAmountPaidEdited = false; // Auto-fill flag
+
+        const defaultUsers = [
+            { username: "admin", password: "1234", role: "admin", fullName: "System Admin" },
+            { username: "1", password: "1", role: "user", fullName: "Cashier" }
+        ];
+
+        // --- 2. COMMUNICATION ---
+        function sendToAhk(action, payload, callbackName) {
+            const el = document.getElementById('ahk_request_channel');
+            console.log('AHK SEND:', action, payload, callbackName);
+
+            // Generate Unique Request ID
+            const reqId = Date.now() + "_" + Math.floor(Math.random() * 1000);
+
+            el.dataset.reqid = reqId; // Set ID
+            el.dataset.action = action;
+            el.dataset.payload = JSON.stringify(payload || {});
+            el.dataset.callback = callbackName;
+
+            // Watchdog: if AHK doesn't pick up the request within 3s, warn in console
+            setTimeout(() => {
+                try {
+                    const ds = document.getElementById('ahk_request_channel').dataset;
+                    if (ds.action === action) {
+                        console.warn('AHK did not pick up request within 3s:', action, payload);
+                    }
+                } catch (e) {
+                    console.error('Watchdog error', e);
+                }
+            }, 3000);
+        }
+
+        window.AHK_Callback = (jsonString) => {
+            try {
+                const response = JSON.parse(jsonString);
+                const el = document.getElementById('ahk_request_channel');
+                const cbName = el.dataset.callback;
+                console.log('AHK RECV:', response, 'callback:', cbName);
+
+                // Clear dataset BEFORE callback (Prevents wiping out new requests made in callback)
+                try {
+                    el.dataset.action = '';
+                    el.dataset.payload = '';
+                    el.dataset.callback = '';
+                } catch (e) { /* ignore */ }
+
+                if (cbName && window[cbName]) {
+                    window[cbName](response);
+                } else {
+                    console.warn('No callback found for AHK response', response);
+                }
+
+            } catch (e) {
+                console.error('AHK_Callback parse error', e, jsonString);
+            }
+        };
+
+        // --- 3. INIT ---
+        window.onload = function () {
+            // Initialize Systems
+            initializeUsers();
+
+            // Auto-migrate admin password to 1234 if it is still 123
+            const users = getUsers();
+            const admin = users.find(u => u.username === 'admin');
+            if (admin && admin.password === '123') {
+                admin.password = '1234';
+                localStorage.setItem('users', JSON.stringify(users));
+                console.log("Admin password migrated to 1234");
+            }
+
+            // Start Auth
+            checkLoginStatus();
+
+            // Load Data
+            sendToAhk("GET_MASTER_DATA", null, "onMasterDataLoaded");
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
+
+            // Barcode
+            setupBarcodeScanner();
+
+            // Check Stock Alerts
+            setTimeout(checkLowStockAlerts, 2000);
+        };
+
+        function onMasterDataLoaded(res) {
+            if (res.status === "success") {
+                masterItems = {};
+                // Process flat DB list into category map
+                res.items.forEach(row => {
+                    if (!masterItems[row.category]) masterItems[row.category] = [];
+                    let item = masterItems[row.category].find(i => i.name === row.name);
+                    if (item) {
+                        item.sizes.push(row.size);
+                        item.rates.push(row.rate);
+                        item.stock_param = row.stock; // Keep orig stock param
+                    } else {
+                        masterItems[row.category].push({
+                            name: row.name,
+                            sizes: [row.size],
+                            rates: [row.rate],
+                            stock_param: row.stock, // Keep orig stock param
+                            selectedSize: row.size,
+                            selectedRate: row.rate,
+                            barcode: row.barcode || generateBarcode(row.name, row.size) // Fallback or use DB
+                        });
+                    }
+                });
+
+                // SYNC WITH LOCALSTORAGE STOCK
+                initializeStock();
+
+                // SYNC USERS (Backend -> Frontend)
+                if (res.users && res.users.length > 0) {
+                    localStorage.setItem('users', JSON.stringify(res.users));
+                }
+
+                renderCategories();
+            }
+        }
+
+        function generateBarcode(name, size) {
+            // Simple hash for demo if DB doesn't have it
+            return (name.substring(0, 3) + size).toUpperCase();
+        }
+
+        // --- 4. AUTH (LOCAL STORAGE BASED) ---
+        function initializeUsers() {
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify(defaultUsers));
+            }
+        }
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users')) || [];
+        }
+
+        function addUser(newUser) {
+            const users = getUsers();
+            if (users.find(u => u.username === newUser.username)) return false;
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            return true;
+        }
+
+        function deleteUser(username) {
+            if (username === 'admin') return false;
+            let users = getUsers();
+            users = users.filter(u => u.username !== username);
+            localStorage.setItem('users', JSON.stringify(users));
+            return true;
+        }
+
+        function checkLoginStatus() {
+            // We don't persist login across reloads for security in this simple POS
+            // Or we could check localStorage.getItem('currentUser')
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('pos-interface').style.display = 'none';
+        }
+
+        function attemptLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            // Use AHK Backend for Login
+            sendToAhk("LOGIN", { username: u, password: p }, "onLoginResponse");
+        }
+
+        function onLoginResponse(res) {
+            if (res.status === "success" || (res.user && res.user.username)) {
+                currentUser = res.user || { username: document.getElementById('username').value, role: 'user' }; // Fallback
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('pos-interface').style.display = 'block';
+                document.getElementById('current-user-display').innerText = currentUser.username;
+
+                // Show/Hide Admin Buttons
+                const adminBtns = document.querySelectorAll('.admin-only');
+                const isAdmin = (currentUser.role === 'admin');
+                adminBtns.forEach(btn => btn.style.display = isAdmin ? 'block' : 'none');
+
+                // Special restriction for Import/Export CSV: Only 'rizwan' can see it
+                const importBtn = document.getElementById('import-csv-btn');
+                const exportBtn = document.getElementById('export-csv-btn');
+                const showCsvBtns = (currentUser.username === 'rizwan');
+                
+                if (importBtn) importBtn.style.display = showCsvBtns ? 'block' : 'none';
+                if (exportBtn) exportBtn.style.display = showCsvBtns ? 'block' : 'none';
+                
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-error').innerText = res.message || "Invalid Credentials";
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            checkLoginStatus();
+        }
+
+
+
+        function importItemsCsv() {
+            if (confirm("⚠️ WARNING: This will REPLACE all existing items with data from the CSV file.\n\nAre you sure you want to proceed?")) {
+                sendToAhk("IMPORT_ITEMS_CSV", null, "onImportComplete");
+            }
+        }
+
+        function onImportComplete(res) {
+            if (res.status === "success") {
+                alert("✅ Items Imported Successfully!\n\n" + res.count + " items updated.");
+                // Reload data
+                sendToAhk("GET_MASTER_DATA", null, "onMasterDataLoaded");
+            } else {
+                alert("❌ Import Failed:\n" + res.message);
+            }
+        }
+
+        function exportItemsCsv() {
+            if (confirm("Create a CSV backup of all items?\n\nYou will be asked where to save the file.")) {
+                sendToAhk("EXPORT_ITEMS_CSV", null, "onExportComplete");
+            }
+        }
+
+        function onExportComplete(res) {
+            if (res.status === "success") {
+                alert("✅ Export Successful!\n\nSaved to:\n" + res.file + "\n\nTotal Items: " + res.count);
+            } else if (res.message !== "Export cancelled") {
+                alert("❌ Export Failed:\n" + res.message);
+            }
+        }
+
+        function initializeStock() {
+            let stockData = JSON.parse(localStorage.getItem('itemStock')) || {};
+            let updated = false;
+            // Sync Master Items to Stock
+            Object.keys(masterItems).forEach(cat => {
+                masterItems[cat].forEach(item => {
+                    item.sizes.forEach((size, idx) => {
+                        const key = `${item.name}_${size}`;
+                        if (!stockData[key]) {
+                            stockData[key] = {
+                                currentStock: item.stock_param !== undefined ? item.stock_param : 20,
+                                lowStockThreshold: 5,
+                                barcode: item.barcode || '',
+                                category: cat
+                            };
+                            updated = true;
+                        }
+                    });
+                });
+            });
+            if (updated) localStorage.setItem('itemStock', JSON.stringify(stockData));
+        }
+
+        function getStockData() { return JSON.parse(localStorage.getItem('itemStock')) || {}; }
+        function getItemStock(name, size) {
+            const stock = getStockData();
+            const key = `${name}_${size}`;
+            return stock[key] ? stock[key].currentStock : 0;
+        }
+        function updateStoredStock(name, size, qty) { // Reduce stock
+            const stock = getStockData();
+            const key = `${name}_${size}`;
+            if (stock[key]) {
+                stock[key].currentStock -= qty;
+                if (stock[key].currentStock < 0) stock[key].currentStock = 0;
+                localStorage.setItem('itemStock', JSON.stringify(stock));
+            }
+        }
+        function setStock(name, size, qty) { // Set absolute stock
+            const stock = getStockData();
+            const key = `${name}_${size}`;
+            if (stock[key]) {
+                stock[key].currentStock = parseInt(qty);
+                localStorage.setItem('itemStock', JSON.stringify(stock));
+            }
+        }
+
+        function showStockManagement() {
+            const stock = getStockData();
+            let html = `
+                <div class="modal" id="stock-modal">
+                    <div class="modal-content" style="max-width:800px;">
+                        <div class="modal-header"><h3>📦 Stock Management</h3><button class="modal-close" onclick="document.getElementById('stock-modal').remove()">×</button></div>
+                        <input type="text" id="stock-search" placeholder="Search..." onkeyup="filterStockTable()" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+                        <table width="100%" border="1" style="border-collapse:collapse; text-align:left;">
+                            <tr style="background:#eee;"><th>Item</th><th>Size</th><th>Stock</th><th>Status</th><th>Action</th></tr>
+                            <tbody id="stock-tbody">
+                            ${Object.keys(stock).map(key => {
+                const s = stock[key];
+                const [name, size] = key.split('_');
+                const status = s.currentStock == 0 ? '<span class="out-of-stock">Out</span>' : (s.currentStock <= s.lowStockThreshold ? '<span class="low-stock">Low</span>' : '<span class="adequate">OK</span>');
+                return `<tr>
+                                    <td>${name}</td><td>${size}</td><td>${s.currentStock}</td><td>${status}</td>
+                                    <td><button onclick="editStock('${name}','${size}')">Edit</button></td>
+                                </tr>`;
+            }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        function filterStockTable() {
+            const q = document.getElementById('stock-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#stock-tbody tr');
+            rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none');
+        }
+
+        function editStock(name, size) {
+            const qty = prompt(`New stock for ${name} (${size})?`);
+            if (qty !== null && !isNaN(qty)) {
+                setStock(name, size, qty);
+                document.getElementById('stock-modal').remove();
+                showStockManagement();
+                // Refresh items UI if open
+                if (currentCategory) renderItems(currentCategory);
+            }
+        }
+
+        function checkLowStockAlerts() {
+            const stock = getStockData();
+            const alerts = [];
+            Object.keys(stock).forEach(key => {
+                if (stock[key].currentStock <= stock[key].lowStockThreshold && stock[key].currentStock > 0) alerts.push(key.replace('_', ' '));
+            });
+            if (alerts.length) alert("⚠️ Low Stock Alert:\n" + alerts.join("\n"));
+        }
+
+        // --- 6. UI RENDERING ---
+        function renderCategories() {
+            const nav = document.getElementById('navigation-buttons');
+            nav.innerHTML = '';
+            const cats = Object.keys(masterItems);
+
+            cats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.innerText = cat.replace(/([A-Z])/g, ' $1').trim();
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.navigation-buttons button').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentCategory = cat;
+                    renderItems(cat);
+                };
+                nav.appendChild(btn);
+            });
+
+            if (cats.length > 0) {
+                currentCategory = cats[0];
+                nav.firstChild.classList.add('active');
+                renderItems(currentCategory);
+            }
+        }
+
+        function renderItems(cat) {
+            const tbody = document.getElementById('items-list');
+            tbody.innerHTML = '';
+
+            masterItems[cat].forEach((item, idx) => {
+                let sizeHtml = '';
+                item.sizes.forEach((s, sIdx) => {
+                    const isSel = item.selectedSize === s;
+                    const stockVal = getItemStock(item.name, s);
+                    const isOut = stockVal <= 0;
+                    const isLow = stockVal <= 5; // Hardcoded low, could use LS
+
+                    let extraClass = '';
+                    if (isOut) extraClass = 'out-of-stock';
+                    else if (isLow) extraClass = 'low-stock';
+
+                    sizeHtml += `<span class="size-btn ${isSel ? 'selected' : ''} ${extraClass}" 
+                        onclick="${isOut ? '' : `selectSize('${cat}', ${idx}, '${s}', ${item.rates[sIdx]})`}" title="Stock: ${stockVal}">${s}</span>`;
+                });
+
+                const currentStock = getItemStock(item.name, item.selectedSize);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:500;">${item.name}</td>
+                    <td>${sizeHtml}</td>
+                    <td>${item.selectedRate}</td>
+                    <td style="font-weight:bold; ${currentStock <= 0 ? 'color:red' : ''}">${currentStock}</td>
+                    <td>
+                        <button class="add-btn" style="background:#dc3545; margin-right:5px;" onclick="decreaseQty('${cat}', ${idx})">-</button>
+                        <button class="add-btn" onclick="addToCart('${cat}', ${idx})"${currentStock <= 0 ? 'disabled style="background:#ccc"' : ''}>+</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function selectSize(cat, idx, size, rate) {
+            masterItems[cat][idx].selectedSize = size;
+            masterItems[cat][idx].selectedRate = rate;
+            renderItems(cat);
+        }
+
+        // --- 7. CART LOGIC ---
+        function addToCart(cat, idx) {
+            const item = masterItems[cat][idx];
+            const stock = getItemStock(item.name, item.selectedSize);
+
+            // Check Cart for existing qty
+            const existing = cart.find(c => c.name === item.name && c.size === item.selectedSize);
+            const currentQtyInCart = existing ? existing.qty : 0;
+
+            if (currentQtyInCart + 1 > stock) {
+                alert("Out of Stock! Cannot add more.");
+                return;
+            }
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    name: item.name,
+                    size: item.selectedSize,
+                    rate: item.selectedRate,
+                    qty: 1
+                });
+            }
+            renderCart();
+        }
+
+        function decreaseQty(cat, idx) {
+            const item = masterItems[cat][idx];
+            const existingIdx = cart.findIndex(c => c.name === item.name && c.size === item.selectedSize);
+
+            if (existingIdx >= 0) {
+                cart[existingIdx].qty--;
+                if (cart[existingIdx].qty <= 0) {
+                    cart.splice(existingIdx, 1);
+                }
+                renderCart();
+            } else {
+                alert("Item not in cart!");
+            }
+        }
+
+        function subtractFromCart(index) { // Indirectly used
+            // ... implemented in renderCart via remove
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-display');
+            if (cart.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 20px; color: #999;">Cart is empty</div>';
+            } else {
+                container.innerHTML = cart.map((item, i) => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <span class="cart-item-name">${item.name}</span>
+                            <span class="cart-item-meta">${item.size} @ ${Math.round(item.rate)}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-weight:bold;">${item.qty}</span>
+                            <span style="font-weight:bold;">${Math.round(item.qty * item.rate)}</span>
+                            <button class="remove-btn" onclick="removeFromCart(${i})">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            calculateTotals();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function calculateTotals() {
+            const sub = cart.reduce((acc, item) => acc + (item.qty * item.rate), 0);
+            const disc = parseFloat(document.getElementById('discount').value) || 0;
+            const del = parseFloat(document.getElementById('delivery-charges').value) || 0;
+
+            const tax = (sub - disc) * TAX_RATE;
+            const total = (sub - disc) + (tax > 0 ? tax : 0) + del;
+
+            document.getElementById('sub-total').innerText = Math.round(sub);
+            document.getElementById('taxes').innerText = Math.round(tax);
+            document.getElementById('total-amount').innerText = Math.round(total);
+            // document.getElementById('total-payable').innerText = Math.round(total); // REMOVED: Element does not exist, caused crash.
+
+            // Auto-fill Amount Paid logic
+            const paidInput = document.getElementById('amount-paid');
+
+            // HEAL: If user cleared the box (empty) or it is 0, reset the flag so it auto-fills again.
+            // This allows the user to "reset" manual mode by just clearing the field.
+            if (paidInput.value.trim() === "" || paidInput.value === "0") {
+                window.isAmountPaidEdited = false;
+            }
+
+            // AUTO-FILL: If flag is false, always update.
+            if (!window.isAmountPaidEdited) {
+                paidInput.value = Math.round(total);
+            }
+
+            const paid = parseFloat(paidInput.value) || 0;
+            // User requested: Total - Paid = Remaining (Balance Due)
+            const remaining = Math.round(total) - paid;
+
+            const remEl = document.getElementById('remaining-amount');
+            remEl.innerText = Math.round(remaining);
+
+            remEl.parentElement.style.color = remaining > 0.01 ? "red" : "green";
+
+            // If Remaining > 0, it means they still owe money (Red).
+            // If Remaining <= 0, it means fully paid or change due (Green/Black).
+            remEl.parentElement.style.color = remaining > 0 ? "red" : "green";
+        }
+
+        function selectOption(category, value, el) {
+            el.parentElement.querySelectorAll('.grid-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+
+            if (category === 'payment') selectedPayment = value;
+            if (category === 'type') {
+                selectedType = value;
+
+                const tbl = document.getElementById('table-row');
+                const del = document.getElementById('delivery-row');
+
+                tbl.style.display = (value === 'dinein') ? 'flex' : 'none';
+                del.style.display = (value === 'delivery') ? 'flex' : 'none';
+
+                if (value === 'delivery') {
+                    document.getElementById('delivery-charges').value = 200;
+                } else {
+                    document.getElementById('delivery-charges').value = 0;
+                }
+                calculateTotals();
+            }
+        }
+
+        // --- 8. CHECKOUT & RECEIPT ---
+        // --- 8. CHECKOUT & RECEIPT ---
+        let checkoutDoPrint = false;
+
+        let invoiceRequestTimout;
+
+        function checkout(doPrint) {
+            if (cart.length === 0) return alert("Cart is empty");
+            checkoutDoPrint = doPrint;
+
+            if (editingInvoiceNo) {
+                proceedCheckout(editingInvoiceNo);
+            } else {
+                // Request ID
+                sendToAhk("GET_NEXT_INVOICE_NO", {}, "onCheckoutInvoiceReceived");
+
+                // Fallback if backend doesn't respond in 2 seconds (Prevents hang)
+                invoiceRequestTimout = setTimeout(() => {
+                    alert("Warning: Backend invoice generation timed out. Using local timestamp.");
+                    proceedCheckout(Date.now().toString().slice(-6));
+                }, 2000);
+            }
+        }
+
+        function onCheckoutInvoiceReceived(res) {
+            clearTimeout(invoiceRequestTimout); // Clear timeout if backend responds
+            if (res.status === 'success') {
+                proceedCheckout(res.invoiceNo);
+            } else {
+                // Fallback if AHK fails
+                proceedCheckout(Date.now().toString().slice(-6));
+            }
+        }
+
+        function proceedCheckout(invNo) {
+
+            const saleData = {
+                invoiceNo: invNo,
+                date: new Date().toLocaleDateString(),
+                customerName: document.getElementById('customer-name').value || "Guest",
+                customerPhone: document.getElementById('customer-phone').value || "",
+                tableNo: document.getElementById('table-no').value || "",
+                orderType: selectedType,
+                paymentMethod: selectedPayment,
+                deliveryCharges: document.getElementById('delivery-charges').value,
+                discount: document.getElementById('discount').value,
+                total: document.getElementById('total-amount').innerText,
+                servedBy: currentUser.username,
+                cart: [...cart] // copy
+            };
+
+            try {
+                // Deduct Stock
+                cart.forEach(i => updateStoredStock(i.name, i.size, i.qty));
+            } catch (e) {
+                console.error("Stock error", e);
+            }
+
+            renderItems(currentCategory); // Refresh UI
+
+            // Save Sale Locally (Legacy/Backup) & Backend
+            saveSale(saleData);
+
+            sendToAhk("SAVE_SALE", saleData, "onSaleComplete");
+
+            if (checkoutDoPrint) {
+                printReceipt(saleData);
+            } else {
+                alert("Sale Saved! Invoice: " + invNo);
+            }
+
+            editingInvoiceNo = null;
+            cart = [];
+            renderCart();
+            document.getElementById('amount-paid').value = 0;
+            document.getElementById('discount').value = 0;
+        }
+
+        function onSaleComplete(res) {
+            console.log("Backend save:", res);
+            if (res.status === 'error') {
+                alert("CRITICAL ERROR: Save Failed!\n" + res.message);
+            }
+        }
+
+        function saveSale(data) {
+            let sales = JSON.parse(localStorage.getItem('todaySales')) || [];
+            // If editing, replace
+            const idx = sales.findIndex(s => s.invoiceNo === data.invoiceNo);
+            if (idx >= 0) sales[idx] = data;
+            else sales.push(data);
+            localStorage.setItem('todaySales', JSON.stringify(sales));
+        }
+
+        function printReceipt(data) {
+            const subTotal = data.cart.reduce((acc, i) => acc + (i.qty * i.rate), 0);
+            const tax = (subTotal - data.discount) * TAX_RATE;
+
+            let itemsHtml = data.cart.map(item => `
+                <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:2px;">
+                    <span style="flex:1;">${item.qty} x</span>
+                    <span style="flex:3;">${item.name} (${item.size})</span>
+                    <span style="flex:1; text-align:right;">${(item.qty * item.rate).toFixed(0)}</span>
+                </div>
+            `).join('');
+
+            const html = `
+            <html><head><style>
+                body { width: 80mm; margin: 0; padding: 2px; font-family: 'Courier New', monospace; font-size: 10px; text-align:center; }
+                .row { display: flex; justify-content: space-between; }
+            </style></head><body>
+                <h3>Meezan Meals Master</h3>
+                <p>Date: ${data.date} | Slip: ${data.invoiceNo}</p>
+                <hr style="border-top:1px dashed #000;">
+                <div style="text-align:left;">Type: ${data.orderType.toUpperCase()} | Pay: ${data.paymentMethod.toUpperCase()}</div>
+                <div>Customer: ${data.customerName}</div>
+                <hr style="border-top:1px dashed #000;">
+                ${itemsHtml}
+                <hr style="border-top:1px dashed #000;">
+                <div class="row"><span>Total:</span><span>${data.total}</span></div>
+                <br>
+                <div>Thank You!</div>
+            </body></html>`;
+
+            const win = window.open('', '_blank', 'width=350,height=500');
+            win.document.write(html);
+            win.document.close();
+            setTimeout(() => { win.print(); win.close(); }, 500);
+        }
+
+        // --- 9. NEW FEATURES (KOT, HOLD, SALES) ---
+
+        // KOT
+        function generateKOT() {
+            if (cart.length === 0) return alert("Empty Cart");
+            const html = `
+                <div style="font-family:'Courier New'; font-size:12px; width:80mm; text-align:center;">
+                    <h3>KITCHEN TICKET</h3>
+                    <p>Table: ${document.getElementById('table-no').value || 'N/A'}</p>
+                    <p>Type: ${selectedType.toUpperCase()}</p>
+                    <hr>
+                    ${cart.map(i => `<div style="text-align:left; font-weight:bold; margin:5px 0;">${i.qty} x ${i.name} (${i.size})</div>`).join('')}
+                    <hr>
+                </div>
+            `;
+            const win = window.open('', '_blank', 'width=300,height=400');
+            win.document.write(html);
+            win.document.close();
+            setTimeout(() => { win.print(); win.close(); }, 500);
+        }
+
+        // HOLD ORDERS
+        function holdOrder() {
+            if (cart.length === 0) return alert("Empty Cart");
+            const name = prompt("Name for Held Order?");
+            if (!name) return;
+            const held = JSON.parse(localStorage.getItem('heldOrders')) || [];
+            held.push({
+                name: name,
+                cart: [...cart],
+                customerName: document.getElementById('customer-name').value,
+                date: new Date().toLocaleString()
+            });
+            localStorage.setItem('heldOrders', JSON.stringify(held));
+            clearCart();
+            alert("Order Held");
+        }
+
+        function showHeldOrders() {
+            const held = JSON.parse(localStorage.getItem('heldOrders')) || [];
+            const html = `
+                <div class="modal" id="hold-modal">
+                    <div class="modal-content">
+                        <div class="modal-header"><h3>Held Orders</h3><button class="modal-close" onclick="document.getElementById('hold-modal').remove()">×</button></div>
+                        ${held.map((h, i) => `
+                            <div style="border:1px solid #ddd; padding:10px; margin:5px; display:flex; justify-content:space-between; align-items:center;">
+                                <div><strong>${h.name}</strong><br><small>${h.date}</small></div>
+                                <div>
+                                    <button onclick="loadHeld(${i})" style="background:#28a745; color:white; border:none; padding:5px;">Load</button>
+                                    <button onclick="deleteHeld(${i})" style="background:#dc3545; color:white; border:none; padding:5px;">Del</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        function loadHeld(i) {
+            const held = JSON.parse(localStorage.getItem('heldOrders')) || [];
+            cart = held[i].cart;
+            document.getElementById('customer-name').value = held[i].customerName || '';
+            renderCart();
+            document.getElementById('hold-modal').remove();
+        }
+
+        function deleteHeld(i) {
+            const held = JSON.parse(localStorage.getItem('heldOrders')) || [];
+            held.splice(i, 1);
+            localStorage.setItem('heldOrders', JSON.stringify(held));
+            document.getElementById('hold-modal').remove();
+            showHeldOrders();
+        }
+
+        function clearCart() {
+            cart = [];
+            renderCart();
+            document.getElementById('amount-paid').value = "";
+            document.getElementById('discount').value = 0;
+            window.isAmountPaidEdited = false; // Reset auto-fill logic
+        }
+
+        // SALES REPORT
+        // SALES REPORT
+        let lastSalesHistory = [];
+
+        function showTodaySales() {
+            // Use Backend Data for Report
+            sendToAhk("GET_SALES_HISTORY", {}, "onSalesHistoryLoaded");
+        }
+
+        function onSalesHistoryLoaded(res) {
+            if (res.status !== 'success') return alert("Failed to load history");
+            lastSalesHistory = res.sales || [];
+
+            // Calculate today's total only
+            const todayStr = new Date().toLocaleDateString(); // e.g., 12/19/2025 (depends on locale)
+            // Note: DB date might be different format depending on AHK (YYYY-MM-DD usually if SQLite default, but here it is Locale String from JS)
+            // JS `new Date().toLocaleDateString()` format varies. Ideally should store ISO.
+            // But proceeding with existing logic.
+
+            let total = 0;
+            lastSalesHistory.forEach(s => {
+                // Simple check if date string matches or just sum all returned (limit 100)
+                // The user wants "Today Generated Invoice".
+                // Let's assume the query returns recent ones.
+                total += parseFloat(s.total || 0);
+            });
+
+            const html = `
+                <div class="modal" id="sales-modal">
+                    <div class="modal-content" style="max-width:900px;">
+                        <div class="modal-header">
+                            <h3>Sales Report (Last 100)</h3>
+                            <div>
+                                <button class="modal-close" onclick="document.getElementById('sales-modal').remove()">×</button>
+                            </div>
+                        </div>
+                        <div style="padding:10px; background:#e8f5e8; font-weight:bold; margin-bottom:10px;">Total (Visible): ${total.toFixed(2)}</div>
+                        <table width="100%" border="1" style="border-collapse:collapse; font-size:12px; text-align:center;">
+                            <tr style="background:#eee;">
+                                <th>Inv#</th><th>Date/Time</th><th>Type</th><th>Items</th><th>Customer</th><th>Mobile</th><th>Total</th><th>Action</th>
+                            </tr>
+                            ${lastSalesHistory.map((s, i) => {
+                // Calculate Item Count from JSON Cart
+                let cnt = 0;
+                try {
+                    let cData = typeof s.json_cart === 'string' ? JSON.parse(s.json_cart) : (s.cart || []);
+                    if (Array.isArray(cData)) cData.forEach(x => cnt += (parseInt(x.qty) || 0));
+                } catch (e) { }
+
+                // Format Type
+                let t = s.type || s.orderType || '-';
+                if (t === 'dinein') t = 'Dining';
+                if (t === 'takeaway') t = 'Takeaway';
+                if (t === 'delivery') t = 'Delivery';
+
+                return `
+                                <tr>
+                                    <td>${s.invoice_no || s.invoiceNo}</td>
+                                    <td>${s.date} ${s.time || ''}</td>
+                                    <td style="text-transform:capitalize;">${t}</td>
+                                    <td>${cnt}</td>
+                                    <td>${s.customer_name || s.customerName}</td>
+                                    <td>${s.customer_phone || ''}</td>
+                                    <td>${parseFloat(s.total).toFixed(2)}</td>
+                                    <td>
+                                        <button onclick="printOldSale(${i})" style="background:#4CAF50; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">🖨️ Print</button>
+                                    </td>
+                                </tr>
+                            `;
+            }).join('')}
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        function printOldSale(index) {
+            const sale = lastSalesHistory[index];
+            // Normalize header names from DB (snake_case) to expected camelCase for printReceipt
+            const printData = {
+                invoiceNo: sale.invoice_no || sale.invoiceNo,
+                date: sale.date,
+                customerName: sale.customer_name || sale.customerName,
+                orderType: sale.type || sale.orderType || 'Dine-in',
+                paymentMethod: sale.payment_method || sale.paymentMethod || 'Cash',
+                discount: sale.discount || 0,
+                total: sale.total,
+                cart: typeof sale.json_cart === 'string' ? JSON.parse(sale.json_cart) : (sale.cart || [])
+            };
+            printReceipt(printData);
+        }
+
+        function resetDatabase() {
+            if (confirm("DANGER: This will delete ALL SALES HISTORY and Reset Invoice Numbers to 00001. Are you sure?")) {
+                sendToAhk("RESET_SALES", {}, "onDatabaseReset");
+            }
+        }
+
+        function onDatabaseReset(res) {
+            alert(res.message);
+            location.reload();
+        }
+
+        // BARCODE SCANNER
+        function setupBarcodeScanner() {
+            document.addEventListener('keydown', function (e) {
+                if (!isBarcodeScannerActive) return;
+                if (e.key === 'Enter') {
+                    if (barcodeInputBuffer.length > 0) handleBarcode(barcodeInputBuffer);
+                    barcodeInputBuffer = '';
+                } else if (e.key.length === 1) {
+                    barcodeInputBuffer += e.key;
+                }
+                clearTimeout(barcodeTimeout);
+                barcodeTimeout = setTimeout(() => barcodeInputBuffer = '', 200);
+            });
+        }
+
+        function toggleBarcodeScanner() {
+            isBarcodeScannerActive = !isBarcodeScannerActive;
+            const btn = document.getElementById('barcode-scanner-btn');
+            if (isBarcodeScannerActive) {
+                btn.classList.add('scanner-active');
+                document.getElementById('scanner-text').innerText = "Active";
+            } else {
+                btn.classList.remove('scanner-active');
+                document.getElementById('scanner-text').innerText = "Scan";
+            }
+        }
+
+        // REPORT GENERATION
+        function openReportModal() {
+            // Default dates: First day of current month to Today
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            // Adjust for timezone offset to ensure correct YYYY-MM-DD
+            const toDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            const fromDate = new Date(firstDay.getTime() - (firstDay.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+            const html = `
+                <div class="modal" id="report-modal">
+                    <div class="modal-content" style="max-width:900px;">
+                        <div class="modal-header">
+                            <h3>📈 Sales Analytics & Report</h3>
+                            <button class="modal-close" onclick="document.getElementById('report-modal').remove()">×</button>
+                        </div>
+                        <div style="padding:15px; background:#f8f9fa; border-bottom:1px solid #ddd; display:flex; gap:10px; align-items:center;">
+                            <label>From:</label>
+                            <input type="date" id="rep-start" value="${fromDate}" style="padding:5px;">
+                            <label>To:</label>
+                            <input type="date" id="rep-end" value="${toDate}" style="padding:5px;">
+                            <button onclick="fetchAndGenerateReport()" style="background:#009688; color:white; border:none; padding:6px 15px; cursor:pointer;">Generate Report</button>
+                        </div>
+                        <div id="report-output" style="padding:10px; max-height:600px; overflow-y:auto;">
+                            <div style="text-align:center; padding:20px; color:#666;">Select dates and click Generate</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        let reportAllSales = [];
+
+        function fetchAndGenerateReport() {
+            document.getElementById('report-output').innerHTML = '<div style="text-align:center;">Loading data...</div>';
+
+            // Fetch ALL data (limit 5000) then filter in JS
+            sendToAhk("GET_SALES_REPORT", {}, "onReportDataLoaded");
+        }
+
+        function onReportDataLoaded(res) {
+            if (res.status !== 'success') return alert("Failed to load data");
+            reportAllSales = res.sales || [];
+            filterAndRenderReport();
+        }
+
+        function filterAndRenderReport() {
+            const startStr = document.getElementById('rep-start').value; // YYYY-MM-DD
+            const endStr = document.getElementById('rep-end').value;     // YYYY-MM-DD
+
+            // Convert inputs to comparable timestamps (Start of day / End of day)
+            // Use local time construction to avoid timezone shifts
+            const startDate = new Date(startStr + "T00:00:00");
+            const endDate = new Date(endStr + "T23:59:59");
+
+            let filtered = [];
+            let itemStats = {}; // { "Burger": {qty: 10, rev: 500} }
+
+            reportAllSales.forEach(s => {
+                // Parse Sale Date. Supports "YYYY-MM-DD HH:MM:SS" or standard formats.
+                let dateStr = s.date;
+                // Try to handle SQL format if T is missing
+                if (typeof dateStr === 'string' && dateStr.indexOf(' ') > 0 && dateStr.indexOf('T') === -1) {
+                    dateStr = dateStr.replace(' ', 'T');
+                }
+
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return;
+
+                if (d >= startDate && d <= endDate) {
+                    filtered.push(s);
+
+                    // Aggregate Items
+                    let cartItems = [];
+                    try {
+                        cartItems = typeof s.json_cart === 'string' ? JSON.parse(s.json_cart) : (s.cart || []);
+                    } catch (e) { }
+
+                    if (Array.isArray(cartItems)) {
+                        cartItems.forEach(i => {
+                            const name = i.name + " (" + i.size + ")";
+                            if (!itemStats[name]) itemStats[name] = { qty: 0, revenue: 0 };
+                            itemStats[name].qty += (parseInt(i.qty) || 0);
+                            itemStats[name].revenue += (parseFloat(i.rate) * (parseInt(i.qty) || 0));
+                        });
+                    }
+                }
+            });
+
+            // Sort Items by Qty
+            let sortedItems = Object.keys(itemStats).map(k => ({
+                name: k,
+                qty: itemStats[k].qty,
+                rev: itemStats[k].revenue
+            })).sort((a, b) => b.qty - a.qty); // Descending
+
+            // Calculate Totals
+            const totalRevenue = filtered.reduce((acc, s) => acc + parseFloat(s.total || 0), 0);
+
+            // Render
+            let html = `
+                <div style="display:flex; gap:20px; margin-bottom:20px;">
+                    <div style="background:#e8f5e8; padding:15px; border-radius:5px; flex:1; text-align:center;">
+                        <h3>${filtered.length}</h3>
+                        <small>Total Orders</small>
+                    </div>
+                    <div style="background:#e3f2fd; padding:15px; border-radius:5px; flex:1; text-align:center;">
+                        <h3>${totalRevenue.toFixed(0)}</h3>
+                        <small>Total Revenue</small>
+                    </div>
+                </div>
+
+                <h4>🏆 Top Selling Items</h4>
+                <div style="max-height:200px; overflow-y:auto; border:1px solid #eee; margin-bottom:20px;">
+                    <table width="100%" border="0" style="font-size:12px; border-collapse:collapse;">
+                        <tr style="background:#f1f1f1; text-align:left;">
+                            <th style="padding:5px;">Item</th>
+                            <th style="padding:5px;">Qty Sold</th>
+                            <th style="padding:5px;">Revenue</th>
+                        </tr>
+                        ${sortedItems.length === 0 ? '<tr><td colspan="3" style="text-align:center; padding:10px;">No sales in this period</td></tr>' : sortedItems.map(i => `
+                            <tr>
+                                <td style="padding:5px; border-bottom:1px solid #eee;">${i.name}</td>
+                                <td style="padding:5px; border-bottom:1px solid #eee;"><b>${i.qty}</b></td>
+                                <td style="padding:5px; border-bottom:1px solid #eee;">${i.rev.toFixed(0)}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+
+                <h4>📜 Transaction Log</h4>
+                <table width="100%" border="1" style="border-collapse:collapse; font-size:11px; text-align:center;">
+                    <tr style="background:#eee;">
+                        <th>Date</th><th>Inv#</th><th>Type</th><th>Items</th><th>Total</th><th>Action</th>
+                    </tr>
+                    ${filtered.length === 0 ? '<tr><td colspan="6" style="text-align:center;">No records found</td></tr>' : filtered.map(s => {
+                let rowCnt = 0;
+                try {
+                    let rcData = typeof s.json_cart === 'string' ? JSON.parse(s.json_cart) : (s.cart || []);
+                    if (Array.isArray(rcData)) rcData.forEach(x => rowCnt += (parseInt(x.qty) || 0));
+                } catch (e) { }
+
+                return `
+                        <tr>
+                            <td>${s.date}</td>
+                            <td>${s.invoice_no || s.invoiceNo}</td>
+                            <td>${(s.type || s.orderType || '-').toUpperCase()}</td>
+                            <td>${rowCnt}</td>
+                            <td>${parseFloat(s.total).toFixed(0)}</td>
+                            <td>
+                                ${currentUser && currentUser.role === 'admin' ?
+                        `<button onclick="deleteSale('${s.invoice_no || s.invoiceNo}')" style="background:#dc3545; color:white; border:none; padding:3px 8px; border-radius:3px; cursor:pointer; font-size:10px;">Delete</button>` : '-'}
+                            </td>
+                        </tr>
+                    `;
+            }).join('')}
+                </table>
+            `;
+
+            document.getElementById('report-output').innerHTML = html;
+        }
+
+        function deleteSale(invNo) {
+            if (confirm("Are you sure you want to delete Invoice #" + invNo + "?")) {
+                sendToAhk("DELETE_SALE", { invoiceNo: invNo }, "onSaleDeleted");
+            }
+        }
+
+        function onSaleDeleted(res) {
+            if (res.status === 'success') {
+                alert("Record Deleted");
+                fetchAndGenerateReport(); // Refresh
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+
+
+        // USER MANAGEMENT FUNCTIONS
+        function showUserManagement() {
+            sendToAhk("GET_USERS", {}, "onUsersLoaded");
+        }
+
+        function onUsersLoaded(res) {
+            if (res.status === 'success') {
+                renderUserTable(res.users);
+            } else {
+                alert("Failed to load users");
+                // Fallback for demo
+                renderUserTable(getUsers());
+            }
+        }
+
+        function renderUserTable(users) {
+            // Check if modal exists
+            let modal = document.getElementById('user-mgmt-modal');
+
+            if (!modal) {
+                // Create modal if not exists
+                const html = `
+                <div class="modal" id="user-mgmt-modal">
+                    <div class="modal-content">
+                        <div class="modal-header"><h3>User Management</h3><button class="modal-close" onclick="document.getElementById('user-mgmt-modal').style.display='none'">×</button></div>
+                        <div style="margin-bottom:10px; display:flex; gap:10px;">
+                            <input id="new-u-name" placeholder="Username" style="padding:5px;">
+                            <input id="new-u-pwd" placeholder="Password" style="padding:5px;">
+                            <input id="new-u-full" placeholder="Full Name" style="padding:5px;">
+                            <select id="new-u-role" style="padding:5px;"><option value="user">User</option><option value="admin">Admin</option></select>
+                            <button onclick="createNewUser()" style="background:#28a745; color:white; border:none; padding:5px 10px;">Add</button>
+                        </div>
+                        <table width="100%" border="1" style="border-collapse:collapse; text-align:center;">
+                            <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Action</th></tr></thead>
+                            <tbody id="user-list-body"></tbody>
+                        </table>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', html);
+                modal = document.getElementById('user-mgmt-modal');
+            }
+
+            const list = document.getElementById('user-list-body');
+            list.innerHTML = ""; // Clear existing rows
+
+            users.forEach(u => {
+                // Fix for case-sensitive keys and filter rizwan
+                const fName = u.fullname || u.FULLNAME || u.FullName || "N/A";
+                const uName = u.username || u.USERNAME || "N/A";
+                const uRole = u.role || u.ROLE || "N/A";
+
+                if (uName === 'rizwan') return; // Hide Super Admin logic
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${fName}</td>
+                    <td style="text-align:center;">${uName}</td>
+                    <td style="text-align:center;">${uRole}</td>
+                    <td style="text-align:center;">
+                        ${(uName !== 'admin') ? `<button class="remove-btn" style="width:auto; height:auto; padding:5px 10px; border-radius:4px;" onclick="promptDeleteUser('${uName}')">Delete</button>` : ''}
+                    </td>
+                `;
+                list.appendChild(tr);
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        function createNewUser() {
+            const u = document.getElementById('new-u-name').value;
+            const p = document.getElementById('new-u-pwd').value;
+            const f = document.getElementById('new-u-full').value;
+            const r = document.getElementById('new-u-role').value;
+            if (!u || !p) return alert("Username/Password required");
+
+            sendToAhk("ADD_USER", { username: u, password: p, fullName: f, role: r }, "onUserAdded");
+        }
+
+        function onUserAdded(res) {
+            if (res.status === 'success') {
+                alert("User Added");
+                document.getElementById('new-u-name').value = '';
+                document.getElementById('new-u-pwd').value = '';
+                document.getElementById('new-u-full').value = '';
+                showUserManagement(); // Reload
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+
+        function promptDeleteUser(uname) {
+            if (confirm("Delete user: " + uname + "?")) {
+                sendToAhk("DELETE_USER", { username: uname }, "onUserActionComplete");
+            }
+        }
+
+        function onUserDeleted(res) {
+            if (res.status === 'success') {
+                alert("User Deleted");
+                showUserManagement();
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+
+        function onUserActionComplete(res) {
+            if (res.status === "success") {
+                alert("Action Successful");
+                // Refresh the modal to show new user
+                showUserManagement();
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+        let titleInterval;
+
+        function updateAppTitles(res) {
+            if (res.status === 'success') {
+                window.AppTitle = res.title;
+                document.title = res.title;
+                document.getElementById('ahkTitleBar').innerText = res.title;
+
+                // STOP THE POLL
+                if (titleInterval) clearInterval(titleInterval);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Poll for App Title every 500ms until set
+            titleInterval = setInterval(() => {
+                if (window.AppTitle && window.AppTitle.length > 0) {
+                    clearInterval(titleInterval);
+                } else {
+                    // Only send if not already pending (basic throttle)
+                    const el = document.getElementById('ahk_request_channel');
+                    if (!el.dataset.action) {
+                        sendToAhk("GET_APP_TITLE", {}, "updateAppTitles");
+                    }
+                }
+            }, 500);
+
+            // ... existing initialization ...
+            renderItems(selectedCategory);
+            renderCart();
+
+            // Track manual edits to Amount Paid
+            document.getElementById('amount-paid').addEventListener('input', () => {
+                window.isAmountPaidEdited = true;
+                calculateTotals();
+            });
+        });
+
+        function handleBarcode(code) {
+            // Search all MasterItems
+            let found = null;
+            let fCat = null;
+            let fIdx = -1;
+
+            Object.keys(masterItems).forEach(cat => {
+                masterItems[cat].forEach((item, idx) => {
+                    if ((item.barcode && item.barcode === code) || generateBarcode(item.name, item.selectedSize) === code) {
+                        found = item; fCat = cat; fIdx = idx;
+                    }
+                });
+            });
+
+            if (found) {
+                addToCart(fCat, fIdx);
+                // Visual feedback
+                const btn = document.getElementById('barcode-scanner-btn');
+                btn.style.background = "#28a745";
+                setTimeout(() => btn.style.background = "", 500);
+            } else {
+                // Audio feedback eventually?
+                alert("Item not found: " + code);
+            }
+        }
+    </script>
+</body>
+
+</html>
